@@ -1,0 +1,126 @@
+<style>
+  textarea {
+    width: 100%;
+    min-height: 250px;
+    margin-bottom: 1rem;
+  }
+
+  .visible {
+    opacity: 1;
+  }
+
+  .hidden {
+    opacity: 0;
+  }
+
+  small {
+    transition: all ease-in-out 80ms;
+    display: block;
+  }
+</style>
+
+<h2>Tokens</h2>
+
+<h3>JSON Figma Vars</h3>
+<textarea id="json"></textarea>
+<small id="json-copy-notif" class="hidden">JSON Copied!</small>
+
+<h3>CSS Custom Properties</h3>
+<textarea id="css"></textarea>
+<small id="css-copy-notif" class="hidden">CSS Copied!</small>
+
+<button id="cancel">Cancel</button>
+
+<script>
+  console.log("UI");
+
+  let json, css;
+
+  document.getElementById("json").addEventListener("focus", async (ev) => {
+    ev.target.select();
+    try {
+      // await navigator.clipboard.writeText(json);
+      document.execCommand("copy");
+      console.log("tokens copied");
+
+      document.getElementById("json-copy-notif").classList.toggle("hidden");
+      document.getElementById("json-copy-notif").classList.toggle("visible");
+      setTimeout(() => {
+        document.getElementById("json-copy-notif").classList.toggle("hidden");
+        document.getElementById("json-copy-notif").classList.toggle("visible");
+      }, 2000);
+    } catch (err) {
+      console.error("Failed to copy tokens: ", err);
+    }
+  });
+
+  document.getElementById("css").addEventListener("focus", async (ev) => {
+    ev.target.select();
+    try {
+      // await navigator.clipboard.writeText(json);
+      document.execCommand("copy");
+      console.log("custom properties copied");
+
+      document.getElementById("css-copy-notif").classList.toggle("hidden");
+      document.getElementById("css-copy-notif").classList.toggle("visible");
+      setTimeout(() => {
+        document.getElementById("css-copy-notif").classList.toggle("hidden");
+        document.getElementById("css-copy-notif").classList.toggle("visible");
+      }, 2000);
+    } catch (err) {
+      console.error("Failed to copy custom properties: ", err);
+    }
+  });
+
+  document.getElementById("cancel").onclick = () => {
+    parent.postMessage({ pluginMessage: { type: "close" } }, "*");
+  };
+
+  const transformColor = (colorObject) => {
+    return `rgba(${colorObject.r * 255}, ${colorObject.g * 255}, ${
+      colorObject.b * 255
+    }, ${colorObject.a})`;
+  };
+
+  onmessage = (event) => {
+    console.log({
+      event,
+    });
+
+    json = event.data.pluginMessage.normalized;
+    css = json
+      .map((v) => {
+        let s = [];
+        if (v.description) {
+          s.push(`// ${v.name}: ${v.description}`);
+        }
+
+        switch (v.resolvedType.toLowerCase()) {
+          case "color":
+            s.push(
+              `--${v.name}: ${transformColor(Object.values(v.values)[0])}`
+            );
+            break;
+          case "boolean":
+            s.push(`--${v.name}: ${Object.values(v.values)[0] ? 1 : 0}`);
+            break;
+          case "float":
+            s.push(`--${v.name}: ${Object.values(v.values)[0]}`);
+            break;
+          case "string":
+            s.push(`--${v.name}: "${Object.values(v.values)[0]}"`);
+            break;
+          default:
+          // skip
+        }
+
+        return s.length > 0 ? s.join("\n") : "";
+      })
+      .reduce((pV, cV) => (pV ? pV.concat("\n", cV) : cV), null);
+
+    console.log({ json, css });
+
+    document.getElementById("json").value = JSON.stringify(json, null, 2);
+    document.getElementById("css").value = css;
+  };
+</script>
