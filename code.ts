@@ -9,7 +9,7 @@
 // This shows the HTML page in "ui.html".
 figma.showUI(__html__);
 
-figma.ui.resize(500, 500);
+figma.ui.resize(500, 800);
 
 const vars = figma.variables.getLocalVariables();
 const collections = figma.variables.getLocalVariableCollections();
