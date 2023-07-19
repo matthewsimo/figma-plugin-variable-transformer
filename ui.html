@@ -1,8 +1,48 @@
 <style>
+  :root {
+    --space-1: 1rem;
+    --radii-1: 4px;
+    --radii-full: 9999px;
+    --color-0: #0c8ce9;
+    --color-0-hover: #0a6dc2;
+    --color-0-active: #0a6dc2;
+    --color-1: rgba(38, 38, 62, 1);
+    --color-2: rgba(238, 238, 212, 1);
+  }
+
+  h3 {
+    margin: 0;
+  }
+
   textarea {
     width: 100%;
-    min-height: 250px;
-    margin-bottom: 1rem;
+    min-height: 200px;
+    margin-bottom: calc(var(--space-1) / 4);
+    padding: calc(var(--space-1) / 2);
+    border-radius: var(--radii-1);
+  }
+
+  small {
+    transition: all ease-in-out 80ms;
+    display: block;
+  }
+
+  button {
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
+    color: var(--color-2);
+    background-color: var(--color-0);
+    border: 0;
+    padding-inline: calc(var(--space-1) * 1.5);
+    padding-block: calc(var(--space-1) / 2);
+    border-radius: var(--radii-full);
+  }
+  button:hover {
+    background-color: var(--color-0-hover);
+  }
+  button:active {
+    background-color: var(--color-0-active);
   }
 
   .visible {
@@ -13,24 +53,47 @@
     opacity: 0;
   }
 
-  small {
-    transition: all ease-in-out 80ms;
-    display: block;
-    margin-bottom: 1rem;
+  .px {
+    padding-inline-start: var(--space-1);
+    padding-inline-end: var(--space-1);
+  }
+
+  .py {
+    padding-block-start: var(--space-1);
+    padding-block-end: var(--space-1);
+  }
+
+  .p {
+    padding: var(--space-1);
+  }
+
+  .wrapper {
+    font-family: "Inter";
+    color: var(--color-1);
+  }
+
+  .lh {
+    line-height: 1.15rem;
+  }
+
+  #css {
+    min-height: 350px;
   }
 </style>
 
-<h2>Tokens</h2>
+<div class="wrapper p">
+  <h3 class="lh py">JSON Figma Vars</h3>
+  <textarea id="json"></textarea>
+  <small id="json-copy-notif" class="hidden">JSON Copied!</small>
 
-<h3>JSON Figma Vars</h3>
-<textarea id="json"></textarea>
-<small id="json-copy-notif" class="hidden">JSON Copied!</small>
+  <h3 class="lh py">CSS Custom Properties</h3>
+  <textarea id="css"></textarea>
+  <small id="css-copy-notif" class="hidden">CSS Copied!</small>
 
-<h3>CSS Custom Properties</h3>
-<textarea id="css"></textarea>
-<small id="css-copy-notif" class="hidden">CSS Copied!</small>
-
-<button id="cancel">Cancel</button>
+  <div class="py">
+    <button id="cancel">Done</button>
+  </div>
+</div>
 
 <script>
   console.log("UI");
@@ -96,23 +159,31 @@
           s.push(`// ${v.name}: ${v.description}`);
         }
 
-        switch (v.resolvedType.toLowerCase()) {
-          case "color":
-            s.push(
-              `--${v.name}: ${transformColor(Object.values(v.values)[0])}`
-            );
-            break;
-          case "boolean":
-            s.push(`--${v.name}: ${Object.values(v.values)[0] ? 1 : 0}`);
-            break;
-          case "float":
-            s.push(`--${v.name}: ${Object.values(v.values)[0]}`);
-            break;
-          case "string":
-            s.push(`--${v.name}: "${Object.values(v.values)[0]}"`);
-            break;
-          default:
-          // skip
+        let val = Object.values(v.values)[0];
+        console.log({ val });
+        if (val.type == "VARIABLE_ALIAS") {
+          let found = json.find((variable) => variable.id === val.id);
+          console.log({ alias: true, id: val.id, found });
+          if (found) {
+            s.push(`--${v.name}: var(--${found.name})`);
+          }
+        } else {
+          switch (v.resolvedType.toLowerCase()) {
+            case "color":
+              s.push(`--${v.name}: ${transformColor(val)}`);
+              break;
+            case "boolean":
+              s.push(`--${v.name}: ${val ? 1 : 0}`);
+              break;
+            case "float":
+              s.push(`--${v.name}: ${val}`);
+              break;
+            case "string":
+              s.push(`--${v.name}: "${val}"`);
+              break;
+            default:
+            // skip
+          }
         }
 
         return s.length > 0 ? s.join("\n") : "";

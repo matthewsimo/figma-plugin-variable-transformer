@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 devDependencies:
   '@figma/plugin-typings':
     specifier: ^1.70.0
@@ -19,7 +23,3 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
     dev: true
-
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
