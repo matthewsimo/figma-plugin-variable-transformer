@@ -1,6 +1,6 @@
 {
   "name": "Brockmann",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Noodling around making a Figma Plugin that takes variables to CSS Custom Properties",
   "main": "code.js",
   "scripts": {

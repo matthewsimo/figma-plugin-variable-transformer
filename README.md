@@ -2,7 +2,7 @@ Figma Plugin to take variables to CSS Custom Properties
 
 🛠️👷🚧 - SUPER WIP, do not use
 
-<img src="./assets/v0.0.2(a).png" />
+<img src="./assets/v0.0.3(a).png" alt="Screenshot of the Figma Plugin in use" />
 
 ---
 

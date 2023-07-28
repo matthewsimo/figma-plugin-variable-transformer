@@ -3,11 +3,11 @@
     --space-1: 1rem;
     --radii-1: 4px;
     --radii-full: 9999px;
-    --color-0: #0c8ce9;
-    --color-0-hover: #0a6dc2;
-    --color-0-active: #0a6dc2;
-    --color-1: rgba(38, 38, 62, 1);
-    --color-2: rgba(238, 238, 212, 1);
+    --color-0: var(--figma-color-bg-brand);
+    --color-0-hover: var(--figma-color-bg-brand-hover);
+    --color-0-active: var(--figma-color-bg-brand-pressed);
+    --color-1: var(--figma-color-text);
+    --color-2: var(--figma-color-bg);
   }
 
   h3 {
@@ -20,18 +20,24 @@
     margin-bottom: calc(var(--space-1) / 4);
     padding: calc(var(--space-1) / 2);
     border-radius: var(--radii-1);
+    color: var(--color-1);
+    background-color: var(--color-2);
   }
 
   small {
     transition: all ease-in-out 80ms;
     display: block;
+    padding-block: calc(var(--space-1) / 2);
+    height: 10px;
+    overflow: visible;
+    color: var(--figma-color-text-tertiary);
   }
 
   button {
     cursor: pointer;
     text-transform: uppercase;
     letter-spacing: 0.1rem;
-    color: var(--color-2);
+    color: var(--color-1);
     background-color: var(--color-0);
     border: 0;
     padding-inline: calc(var(--space-1) * 1.5);
@@ -99,6 +105,7 @@
   console.log("UI");
 
   let json, css;
+  const notifTimeout = 2 * 1000;
 
   document.getElementById("json").addEventListener("focus", async (ev) => {
     ev.target.select();
@@ -112,7 +119,7 @@
       setTimeout(() => {
         document.getElementById("json-copy-notif").classList.toggle("hidden");
         document.getElementById("json-copy-notif").classList.toggle("visible");
-      }, 2000);
+      }, notifTimeout);
     } catch (err) {
       console.error("Failed to copy tokens: ", err);
     }
@@ -130,7 +137,7 @@
       setTimeout(() => {
         document.getElementById("css-copy-notif").classList.toggle("hidden");
         document.getElementById("css-copy-notif").classList.toggle("visible");
-      }, 2000);
+      }, notifTimeout);
     } catch (err) {
       console.error("Failed to copy custom properties: ", err);
     }
